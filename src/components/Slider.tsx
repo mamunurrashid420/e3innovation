@@ -69,7 +69,19 @@ export default function Slider({ slides }: SliderProps) {
             {currentSlide.button_text && currentSlide.button_link && (
               <Link
                 to={currentSlide.button_link}
-                className="inline-block px-8 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded transition-colors animate-fade-in-delay-2"
+                className="inline-block px-8 py-3 text-white font-medium uppercase tracking-wide transition-all duration-300 animate-fade-in-delay-2 border-2"
+                style={{
+                  backgroundColor: 'var(--color-primary)',
+                  borderColor: 'var(--color-primary)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--color-primary-hover)';
+                  e.currentTarget.style.borderColor = 'var(--color-primary-hover)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--color-primary)';
+                  e.currentTarget.style.borderColor = 'var(--color-primary)';
+                }}
               >
                 {currentSlide.button_text}
               </Link>

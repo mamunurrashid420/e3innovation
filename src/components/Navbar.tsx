@@ -18,12 +18,12 @@ const Navbar = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="fixed top-0 left-0 right-0 bg-white/95 shadow-sm z-50">
+    <nav className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm shadow-sm z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Link to="/" className="flex items-center">
-            <span className="text-2xl font-bold text-gray-900">
-              E3<span className="text-red-600">INNOVATION</span>
+            <span className="text-2xl font-bold" style={{ color: 'var(--color-text-dark)' }}>
+              E3<span style={{ color: 'var(--color-primary)' }}>INNOVATION</span>
             </span>
           </Link>
 
@@ -32,23 +32,26 @@ const Navbar = () => {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`text-sm font-medium transition-colors relative pb-1 ${
-                  isActive(item.path)
-                    ? 'text-red-600'
-                    : 'text-gray-700 hover:text-red-600'
-                }`}
+                className="relative text-sm font-normal uppercase tracking-wide transition-colors py-5 group"
+                style={{
+                  color: isActive(item.path) ? 'var(--color-primary)' : 'var(--color-text-gray)'
+                }}
               >
                 {item.label}
-                {isActive(item.path) && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600"></span>
-                )}
+                <span
+                  className={`absolute bottom-0 left-0 right-0 h-0.5 transition-all duration-300 ${
+                    isActive(item.path) ? 'w-full' : 'w-0 group-hover:w-full'
+                  }`}
+                  style={{ backgroundColor: 'var(--color-primary)' }}
+                ></span>
               </Link>
             ))}
           </div>
 
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 rounded-md text-gray-700 hover:text-red-600 hover:bg-gray-100"
+            className="md:hidden p-2"
+            style={{ color: 'var(--color-primary)' }}
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -63,11 +66,11 @@ const Navbar = () => {
                 key={item.path}
                 to={item.path}
                 onClick={() => setIsOpen(false)}
-                className={`block px-3 py-2 rounded-md text-sm font-medium ${
-                  isActive(item.path)
-                    ? 'text-red-600 bg-red-50'
-                    : 'text-gray-700 hover:text-red-600 hover:bg-gray-50'
-                }`}
+                className="block px-3 py-2 text-sm font-medium uppercase tracking-wide"
+                style={{
+                  color: isActive(item.path) ? 'var(--color-primary)' : 'var(--color-text-gray)',
+                  backgroundColor: isActive(item.path) ? '#FEF2F2' : 'transparent'
+                }}
               >
                 {item.label}
               </Link>

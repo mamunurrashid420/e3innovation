@@ -14,7 +14,7 @@ interface TeamCardProps {
 
 const TeamCard = ({ name, designation, photo, socialLinks }: TeamCardProps) => {
   return (
-    <div className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow overflow-hidden">
+    <div className="bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
       <div className="relative h-80 overflow-hidden bg-gray-200">
         <img
           src={photo}
@@ -23,8 +23,8 @@ const TeamCard = ({ name, designation, photo, socialLinks }: TeamCardProps) => {
         />
       </div>
       <div className="p-6 text-center">
-        <h3 className="text-xl font-bold text-gray-900 mb-1">{name}</h3>
-        <p className="text-red-600 font-medium mb-4">{designation}</p>
+        <h3 className="text-xl font-bold mb-1" style={{ color: 'var(--color-text-dark)' }}>{name}</h3>
+        <p className="font-medium mb-4" style={{ color: 'var(--color-primary)' }}>{designation}</p>
         {socialLinks && (
           <div className="flex justify-center space-x-3">
             {socialLinks.facebook && (
@@ -32,7 +32,16 @@ const TeamCard = ({ name, designation, photo, socialLinks }: TeamCardProps) => {
                 href={socialLinks.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-full bg-gray-100 hover:bg-red-600 hover:text-white flex items-center justify-center transition-colors"
+                className="w-9 h-9 rounded-full bg-gray-100 hover:text-white flex items-center justify-center transition-all duration-300"
+                style={{ color: 'var(--color-text-gray)' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--color-primary)';
+                  e.currentTarget.style.color = 'white';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '';
+                  e.currentTarget.style.color = 'var(--color-text-gray)';
+                }}
               >
                 <Facebook size={18} />
               </a>
@@ -42,7 +51,16 @@ const TeamCard = ({ name, designation, photo, socialLinks }: TeamCardProps) => {
                 href={socialLinks.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-full bg-gray-100 hover:bg-red-600 hover:text-white flex items-center justify-center transition-colors"
+                className="w-9 h-9 rounded-full bg-gray-100 hover:text-white flex items-center justify-center transition-all duration-300"
+                style={{ color: 'var(--color-text-gray)' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--color-primary)';
+                  e.currentTarget.style.color = 'white';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '';
+                  e.currentTarget.style.color = 'var(--color-text-gray)';
+                }}
               >
                 <Linkedin size={18} />
               </a>
@@ -52,7 +70,16 @@ const TeamCard = ({ name, designation, photo, socialLinks }: TeamCardProps) => {
                 href={socialLinks.twitter}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-full bg-gray-100 hover:bg-red-600 hover:text-white flex items-center justify-center transition-colors"
+                className="w-9 h-9 rounded-full bg-gray-100 hover:text-white flex items-center justify-center transition-all duration-300"
+                style={{ color: 'var(--color-text-gray)' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--color-primary)';
+                  e.currentTarget.style.color = 'white';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '';
+                  e.currentTarget.style.color = 'var(--color-text-gray)';
+                }}
               >
                 <Twitter size={18} />
               </a>
@@ -62,7 +89,16 @@ const TeamCard = ({ name, designation, photo, socialLinks }: TeamCardProps) => {
                 href={socialLinks.github}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-full bg-gray-100 hover:bg-red-600 hover:text-white flex items-center justify-center transition-colors"
+                className="w-9 h-9 rounded-full bg-gray-100 hover:text-white flex items-center justify-center transition-all duration-300"
+                style={{ color: 'var(--color-text-gray)' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--color-primary)';
+                  e.currentTarget.style.color = 'white';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '';
+                  e.currentTarget.style.color = 'var(--color-text-gray)';
+                }}
               >
                 <Github size={18} />
               </a>
