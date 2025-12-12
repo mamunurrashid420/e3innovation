@@ -7,6 +7,7 @@ import {
   FolderKanban,
   Users,
   MessageSquare,
+  Image,
   LogOut,
   Menu,
   X
@@ -18,6 +19,7 @@ interface AdminLayoutProps {
 
 const menuItems = [
   { path: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+  { path: '/admin/sliders', icon: Image, label: 'Sliders' },
   { path: '/admin/services', icon: Briefcase, label: 'Services' },
   { path: '/admin/projects', icon: FolderKanban, label: 'Projects' },
   { path: '/admin/team', icon: Users, label: 'Team' },

@@ -212,6 +212,62 @@ export const api = {
       return data;
     },
   },
+
+  sliders: {
+    getAll: async () => {
+      const { data, error } = await supabase
+        .from('sliders')
+        .select('*')
+        .order('order_index', { ascending: true });
+
+      if (error) throw error;
+      return data;
+    },
+
+    getActive: async () => {
+      const { data, error } = await supabase
+        .from('sliders')
+        .select('*')
+        .eq('is_active', true)
+        .order('order_index', { ascending: true });
+
+      if (error) throw error;
+      return data;
+    },
+
+    create: async (sliderData: any) => {
+      const { data, error } = await supabase
+        .from('sliders')
+        .insert([sliderData])
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+
+    update: async (id: number, sliderData: any) => {
+      const { data, error } = await supabase
+        .from('sliders')
+        .update({ ...sliderData, updated_at: new Date().toISOString() })
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+
+    delete: async (id: number) => {
+      const { error } = await supabase
+        .from('sliders')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      return { success: true };
+    },
+  },
 };
 
 export default supabase;

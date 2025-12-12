@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import Slider from '../components/Slider';
 import Hero from '../components/Hero';
 import ServiceCard from '../components/ServiceCard';
 import ProjectCard from '../components/ProjectCard';
@@ -10,6 +11,7 @@ import { Users, Clock, Target, Award } from 'lucide-react';
 
 const Home = () => {
   const [settings, setSettings] = useState<Settings | null>(null);
+  const [sliders, setSliders] = useState<any[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [team, setTeam] = useState<TeamMember[]>([]);
@@ -18,12 +20,14 @@ const Home = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [servicesData, projectsData, teamData] = await Promise.all([
+        const [slidersData, servicesData, projectsData, teamData] = await Promise.all([
+          api.sliders.getActive(),
           api.services.getAll(),
           api.projects.getAll({ per_page: 6 }),
           api.team.getAll(),
         ]);
 
+        setSliders(slidersData || []);
         setServices((servicesData || []).slice(0, 4));
         setProjects((projectsData || []).slice(0, 6));
         setTeam((teamData || []).slice(0, 4));
@@ -61,11 +65,15 @@ const Home = () => {
 
   return (
     <div className="min-h-screen">
-      <Hero
-        title={(settings || defaultSettings).hero_title}
-        subtitle={(settings || defaultSettings).hero_subtitle}
-        backgroundImage={(settings || defaultSettings).hero_background_image}
-      />
+      {sliders.length > 0 ? (
+        <Slider slides={sliders} />
+      ) : (
+        <Hero
+          title={(settings || defaultSettings).hero_title}
+          subtitle={(settings || defaultSettings).hero_subtitle}
+          backgroundImage={(settings || defaultSettings).hero_background_image}
+        />
+      )}
 
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

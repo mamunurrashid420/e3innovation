@@ -13,6 +13,7 @@ import Team from './pages/Team';
 import Contact from './pages/Contact';
 import AdminLogin from './pages/admin/Login';
 import AdminDashboard from './pages/admin/Dashboard';
+import AdminSliders from './pages/admin/Sliders';
 import AdminServices from './pages/admin/Services';
 import AdminProjects from './pages/admin/Projects';
 import AdminTeamMembers from './pages/admin/TeamMembers';
@@ -28,6 +29,12 @@ function App() {
           <Route path="/admin/dashboard" element={
             <ProtectedRoute>
               <AdminDashboard />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/admin/sliders" element={
+            <ProtectedRoute>
+              <AdminSliders />
             </ProtectedRoute>
           } />
 
