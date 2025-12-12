@@ -2,14 +2,14 @@ import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
 
-const api = axios.create({
+const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-api.interceptors.request.use(
+apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('admin_token');
     if (token) {
@@ -22,7 +22,7 @@ api.interceptors.request.use(
   }
 );
 
-api.interceptors.response.use(
+apiClient.interceptors.response.use(
   (response) => {
     if (response.data && typeof response.data === 'object' && 'data' in response.data) {
       return { ...response, data: response.data.data };
@@ -39,22 +39,22 @@ api.interceptors.response.use(
 );
 
 export const homeApi = {
-  getSettings: () => api.get('/public/settings'),
+  getSettings: () => apiClient.get('/public/settings'),
 };
 
 export const servicesApi = {
-  getAll: () => api.get('/public/services'),
-  getBySlug: (slug: string) => api.get(`/public/services/${slug}`),
+  getAll: () => apiClient.get('/public/services'),
+  getBySlug: (slug: string) => apiClient.get(`/public/services/${slug}`),
 };
 
 export const projectsApi = {
   getAll: (params?: { category?: string; page?: number; per_page?: number }) =>
-    api.get('/public/projects', { params }),
-  getBySlug: (slug: string) => api.get(`/public/projects/${slug}`),
+    apiClient.get('/public/projects', { params }),
+  getBySlug: (slug: string) => apiClient.get(`/public/projects/${slug}`),
 };
 
 export const teamApi = {
-  getAll: () => api.get('/public/team'),
+  getAll: () => apiClient.get('/public/team'),
 };
 
 export const contactApi = {
@@ -64,63 +64,63 @@ export const contactApi = {
     phone: string;
     subject: string;
     message: string;
-  }) => api.post('/public/contact', data),
+  }) => apiClient.post('/public/contact', data),
 };
 
 export const authApi = {
   login: (credentials: { email: string; password: string }) =>
-    api.post('/auth/login', credentials),
-  logout: () => api.post('/auth/logout'),
+    apiClient.post('/auth/login', credentials),
+  logout: () => apiClient.post('/auth/logout'),
 };
 
 export const adminServicesApi = {
-  getAll: () => api.get('/admin/services'),
-  create: (data: FormData) => api.post('/admin/services', data, {
+  getAll: () => apiClient.get('/admin/services'),
+  create: (data: FormData) => apiClient.post('/admin/services', data, {
     headers: { 'Content-Type': 'multipart/form-data' },
   }),
-  getById: (id: number) => api.get(`/admin/services/${id}`),
-  update: (id: number, data: FormData) => api.put(`/admin/services/${id}`, data, {
+  getById: (id: number) => apiClient.get(`/admin/services/${id}`),
+  update: (id: number, data: FormData) => apiClient.put(`/admin/services/${id}`, data, {
     headers: { 'Content-Type': 'multipart/form-data' },
   }),
-  delete: (id: number) => api.delete(`/admin/services/${id}`),
+  delete: (id: number) => apiClient.delete(`/admin/services/${id}`),
 };
 
 export const adminProjectsApi = {
-  getAll: () => api.get('/admin/projects'),
-  create: (data: FormData) => api.post('/admin/projects', data, {
+  getAll: () => apiClient.get('/admin/projects'),
+  create: (data: FormData) => apiClient.post('/admin/projects', data, {
     headers: { 'Content-Type': 'multipart/form-data' },
   }),
-  getById: (id: number) => api.get(`/admin/projects/${id}`),
-  update: (id: number, data: FormData) => api.put(`/admin/projects/${id}`, data, {
+  getById: (id: number) => apiClient.get(`/admin/projects/${id}`),
+  update: (id: number, data: FormData) => apiClient.put(`/admin/projects/${id}`, data, {
     headers: { 'Content-Type': 'multipart/form-data' },
   }),
-  delete: (id: number) => api.delete(`/admin/projects/${id}`),
+  delete: (id: number) => apiClient.delete(`/admin/projects/${id}`),
 };
 
 export const adminTeamApi = {
-  getAll: () => api.get('/admin/team'),
-  create: (data: FormData) => api.post('/admin/team', data, {
+  getAll: () => apiClient.get('/admin/team'),
+  create: (data: FormData) => apiClient.post('/admin/team', data, {
     headers: { 'Content-Type': 'multipart/form-data' },
   }),
-  getById: (id: number) => api.get(`/admin/team/${id}`),
-  update: (id: number, data: FormData) => api.put(`/admin/team/${id}`, data, {
+  getById: (id: number) => apiClient.get(`/admin/team/${id}`),
+  update: (id: number, data: FormData) => apiClient.put(`/admin/team/${id}`, data, {
     headers: { 'Content-Type': 'multipart/form-data' },
   }),
-  delete: (id: number) => api.delete(`/admin/team/${id}`),
+  delete: (id: number) => apiClient.delete(`/admin/team/${id}`),
 };
 
 export const adminSettingsApi = {
-  get: () => api.get('/admin/settings'),
-  update: (data: FormData) => api.put('/admin/settings', data, {
+  get: () => apiClient.get('/admin/settings'),
+  update: (data: FormData) => apiClient.put('/admin/settings', data, {
     headers: { 'Content-Type': 'multipart/form-data' },
   }),
 };
 
 export const adminContactsApi = {
   getAll: (params?: { status?: string; page?: number }) =>
-    api.get('/admin/contacts', { params }),
-  getById: (id: number) => api.get(`/admin/contacts/${id}`),
-  markAsRead: (id: number) => api.patch(`/admin/contacts/${id}/read`),
+    apiClient.get('/admin/contacts', { params }),
+  getById: (id: number) => apiClient.get(`/admin/contacts/${id}`),
+  markAsRead: (id: number) => apiClient.patch(`/admin/contacts/${id}/read`),
 };
 
 export const uploadApi = {
@@ -128,10 +128,75 @@ export const uploadApi = {
     const formData = new FormData();
     formData.append('file', file);
     if (folder) formData.append('folder', folder);
-    return api.post('/admin/upload', formData, {
+    return apiClient.post('/admin/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
   },
 };
 
-export default api;
+export const api = {
+  services: {
+    getAll: async () => {
+      const response = await servicesApi.getAll();
+      return response.data;
+    },
+    getBySlug: async (slug: string) => {
+      const response = await servicesApi.getBySlug(slug);
+      return response.data;
+    },
+    create: async (data: any) => {
+      const response = await adminServicesApi.create(data);
+      return response.data;
+    },
+    update: async (id: number, data: any) => {
+      const response = await adminServicesApi.update(id, data);
+      return response.data;
+    },
+    delete: async (id: number) => {
+      const response = await adminServicesApi.delete(id);
+      return response.data;
+    },
+  },
+  projects: {
+    getAll: async (params?: any) => {
+      const response = await projectsApi.getAll(params);
+      return response.data;
+    },
+    getBySlug: async (slug: string) => {
+      const response = await projectsApi.getBySlug(slug);
+      return response.data;
+    },
+    create: async (data: any) => {
+      const response = await adminProjectsApi.create(data);
+      return response.data;
+    },
+    update: async (id: number, data: any) => {
+      const response = await adminProjectsApi.update(id, data);
+      return response.data;
+    },
+    delete: async (id: number) => {
+      const response = await adminProjectsApi.delete(id);
+      return response.data;
+    },
+  },
+  team: {
+    getAll: async () => {
+      const response = await teamApi.getAll();
+      return response.data;
+    },
+    create: async (data: any) => {
+      const response = await adminTeamApi.create(data);
+      return response.data;
+    },
+    update: async (id: number, data: any) => {
+      const response = await adminTeamApi.update(id, data);
+      return response.data;
+    },
+    delete: async (id: number) => {
+      const response = await adminTeamApi.delete(id);
+      return response.data;
+    },
+  },
+};
+
+export default apiClient;
