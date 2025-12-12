@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { projectsApi } from '../services/api';
+import { api } from '../services/api';
 import { Project } from '../types';
 import { ArrowLeft, Calendar, Tag } from 'lucide-react';
 
@@ -14,8 +14,8 @@ const ProjectDetails = () => {
       if (!slug) return;
 
       try {
-        const response = await projectsApi.getBySlug(slug);
-        setProject(response.data.data);
+        const data = await api.projects.getBySlug(slug);
+        setProject(data);
       } catch (error) {
         console.error('Error fetching project:', error);
       } finally {

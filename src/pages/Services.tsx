@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Hero from '../components/Hero';
 import ServiceCard from '../components/ServiceCard';
-import { servicesApi } from '../services/api';
+import { api } from '../services/api';
 import { Service } from '../types';
 
 const Services = () => {
@@ -11,8 +11,8 @@ const Services = () => {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await servicesApi.getAll();
-        setServices(response.data.data);
+        const data = await api.services.getAll();
+        setServices(data || []);
       } catch (error) {
         console.error('Error fetching services:', error);
       } finally {

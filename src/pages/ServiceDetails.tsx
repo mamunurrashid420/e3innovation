@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { servicesApi } from '../services/api';
+import { api } from '../services/api';
 import { Service } from '../types';
 import { ArrowLeft, Check } from 'lucide-react';
 
@@ -14,8 +14,8 @@ const ServiceDetails = () => {
       if (!slug) return;
 
       try {
-        const response = await servicesApi.getBySlug(slug);
-        setService(response.data.data);
+        const data = await api.services.getBySlug(slug);
+        setService(data);
       } catch (error) {
         console.error('Error fetching service:', error);
       } finally {

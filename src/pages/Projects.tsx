@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Hero from '../components/Hero';
 import ProjectCard from '../components/ProjectCard';
-import { projectsApi } from '../services/api';
+import { api } from '../services/api';
 import { Project } from '../types';
 
 const Projects = () => {
@@ -13,9 +13,9 @@ const Projects = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await projectsApi.getAll();
-        setProjects(response.data.data);
-        setFilteredProjects(response.data.data);
+        const data = await api.projects.getAll();
+        setProjects(data || []);
+        setFilteredProjects(data || []);
       } catch (error) {
         console.error('Error fetching projects:', error);
       } finally {

@@ -4,7 +4,7 @@ import Hero from '../components/Hero';
 import ServiceCard from '../components/ServiceCard';
 import ProjectCard from '../components/ProjectCard';
 import TeamCard from '../components/TeamCard';
-import { homeApi, servicesApi, projectsApi, teamApi } from '../services/api';
+import { api } from '../services/api';
 import { Settings, Service, Project, TeamMember } from '../types';
 import { Users, Clock, Target, Award } from 'lucide-react';
 
@@ -18,17 +18,15 @@ const Home = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [settingsRes, servicesRes, projectsRes, teamRes] = await Promise.all([
-          homeApi.getSettings(),
-          servicesApi.getAll(),
-          projectsApi.getAll({ per_page: 6 }),
-          teamApi.getAll(),
+        const [servicesData, projectsData, teamData] = await Promise.all([
+          api.services.getAll(),
+          api.projects.getAll({ per_page: 6 }),
+          api.team.getAll(),
         ]);
 
-        setSettings(settingsRes.data);
-        setServices(servicesRes.data.slice(0, 4));
-        setProjects(projectsRes.data.slice(0, 6));
-        setTeam(teamRes.data.slice(0, 4));
+        setServices((servicesData || []).slice(0, 4));
+        setProjects((projectsData || []).slice(0, 6));
+        setTeam((teamData || []).slice(0, 4));
       } catch (error) {
         console.error('Error fetching home data:', error);
       } finally {
