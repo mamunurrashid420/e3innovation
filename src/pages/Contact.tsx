@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Hero from '../components/Hero';
 import FormInput from '../components/FormInput';
 import Alert from '../components/Alert';
-import { contactApi } from '../services/api';
+import { contactApi, homeApi } from '../services/api';
+import { Settings } from '../types';
 import { MapPin, Phone, Mail } from 'lucide-react';
 
 const Contact = () => {
@@ -13,10 +14,24 @@ const Contact = () => {
     subject: '',
     message: '',
   });
+  const [settings, setSettings] = useState<Settings | null>(null);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState<{ type: 'success' | 'error'; message: string } | null>(
     null
   );
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await homeApi.getSettings();
+        setSettings(response.data);
+      } catch (error) {
+        console.error('Error fetching settings:', error);
+      }
+    };
+
+    fetchSettings();
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -87,7 +102,9 @@ const Contact = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">Address</h3>
-                    <p className="text-gray-600">Dhaka, Bangladesh</p>
+                    <p className="text-gray-600">
+                      {settings?.contact_info.address || 'Dhaka, Bangladesh'}
+                    </p>
                   </div>
                 </div>
 
@@ -97,7 +114,9 @@ const Contact = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">Phone</h3>
-                    <p className="text-gray-600">+880 1234-567890</p>
+                    <p className="text-gray-600">
+                      {settings?.contact_info.phone || '+880 1234-567890'}
+                    </p>
                   </div>
                 </div>
 
@@ -107,7 +126,9 @@ const Contact = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">Email</h3>
-                    <p className="text-gray-600">info@e3innovationlimited.com</p>
+                    <p className="text-gray-600">
+                      {settings?.contact_info.email || 'info@e3innovationlimited.com'}
+                    </p>
                   </div>
                 </div>
               </div>

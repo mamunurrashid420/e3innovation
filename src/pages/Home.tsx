@@ -4,19 +4,31 @@ import Hero from '../components/Hero';
 import ServiceCard from '../components/ServiceCard';
 import ProjectCard from '../components/ProjectCard';
 import TeamCard from '../components/TeamCard';
-import { homeApi } from '../services/api';
-import { HomeData } from '../types';
-import { Code, Smartphone, Globe, TestTube, Users, Clock, Target, Award } from 'lucide-react';
+import { homeApi, servicesApi, projectsApi, teamApi } from '../services/api';
+import { Settings, Service, Project, TeamMember } from '../types';
+import { Users, Clock, Target, Award } from 'lucide-react';
 
 const Home = () => {
-  const [data, setData] = useState<HomeData | null>(null);
+  const [settings, setSettings] = useState<Settings | null>(null);
+  const [services, setServices] = useState<Service[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [team, setTeam] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await homeApi.getHomeData();
-        setData(response.data.data);
+        const [settingsRes, servicesRes, projectsRes, teamRes] = await Promise.all([
+          homeApi.getSettings(),
+          servicesApi.getAll(),
+          projectsApi.getAll({ per_page: 6 }),
+          teamApi.getAll(),
+        ]);
+
+        setSettings(settingsRes.data);
+        setServices(servicesRes.data.slice(0, 4));
+        setProjects(projectsRes.data.slice(0, 6));
+        setTeam(teamRes.data.slice(0, 4));
       } catch (error) {
         console.error('Error fetching home data:', error);
       } finally {
@@ -35,23 +47,26 @@ const Home = () => {
     );
   }
 
-  const settings = data?.settings || {
+  const defaultSettings = {
+    site_title: 'E3 Innovation',
     hero_title: 'E3 INNOVATION - Your Trusted Software Development Partner',
     hero_subtitle: 'We deliver innovative software solutions that transform businesses. Expert team, agile methodology, and cutting-edge technology.',
     hero_background_image: '',
     about_section_content: 'We are a leading software development company specializing in custom software solutions, web applications, mobile apps, and quality assurance services.',
+    contact_info: {
+      phone: '',
+      email: '',
+      address: '',
+    },
+    footer_text: '',
   };
-
-  const services = data?.services?.slice(0, 4) || [];
-  const projects = data?.projects?.slice(0, 6) || [];
-  const team = data?.team?.slice(0, 4) || [];
 
   return (
     <div className="min-h-screen">
       <Hero
-        title={settings.hero_title}
-        subtitle={settings.hero_subtitle}
-        backgroundImage={settings.hero_background_image}
+        title={(settings || defaultSettings).hero_title}
+        subtitle={(settings || defaultSettings).hero_subtitle}
+        backgroundImage={(settings || defaultSettings).hero_background_image}
       />
 
       <section className="py-20 bg-white">
@@ -116,7 +131,7 @@ const Home = () => {
             </h2>
             <div className="max-w-3xl mx-auto">
               <p className="text-lg text-gray-600 leading-relaxed">
-                {settings.about_section_content}
+                {(settings || defaultSettings).about_section_content}
               </p>
             </div>
           </div>

@@ -6,7 +6,9 @@ export interface Service {
   long_description: string;
   icon: string;
   image: string;
-  status: boolean;
+  status: 'active' | 'inactive';
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface Project {
@@ -17,7 +19,9 @@ export interface Project {
   category: string;
   featured_image: string;
   gallery_images: string[];
-  status: boolean;
+  status: 'completed' | 'ongoing' | 'pending';
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface TeamMember {
@@ -29,7 +33,7 @@ export interface TeamMember {
     facebook?: string;
     linkedin?: string;
     twitter?: string;
-    github?: string;
+    instagram?: string;
   };
 }
 
@@ -55,9 +59,47 @@ export interface ContactMessage {
   message: string;
 }
 
-export interface HomeData {
-  settings: Settings;
-  services: Service[];
-  projects: Project[];
-  team: TeamMember[];
+export interface ApiResponse<T = any> {
+  success: boolean;
+  data?: T;
+  message?: string;
+  errors?: Record<string, string[]>;
+}
+
+export interface PaginationMeta {
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+  from?: number;
+  to?: number;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  meta: PaginationMeta;
+}
+
+export interface ContactMessageResponse extends ContactMessage {
+  id: number;
+  is_read: boolean;
+  created_at: string;
+}
+
+export interface AuthResponse {
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+  user: {
+    id: number;
+    name: string;
+    email: string;
+  };
+}
+
+export interface UploadResponse {
+  url: string;
+  path: string;
+  size: number;
+  mime_type: string;
 }

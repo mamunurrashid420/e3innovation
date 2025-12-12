@@ -23,7 +23,12 @@ api.interceptors.request.use(
 );
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    if (response.data && typeof response.data === 'object' && 'data' in response.data) {
+      return { ...response, data: response.data.data };
+    }
+    return response;
+  },
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('admin_token');
@@ -34,21 +39,22 @@ api.interceptors.response.use(
 );
 
 export const homeApi = {
-  getHomeData: () => api.get('/home'),
+  getSettings: () => api.get('/public/settings'),
 };
 
 export const servicesApi = {
-  getAll: () => api.get('/services'),
-  getBySlug: (slug: string) => api.get(`/services/${slug}`),
+  getAll: () => api.get('/public/services'),
+  getBySlug: (slug: string) => api.get(`/public/services/${slug}`),
 };
 
 export const projectsApi = {
-  getAll: () => api.get('/projects'),
-  getBySlug: (slug: string) => api.get(`/projects/${slug}`),
+  getAll: (params?: { category?: string; page?: number; per_page?: number }) =>
+    api.get('/public/projects', { params }),
+  getBySlug: (slug: string) => api.get(`/public/projects/${slug}`),
 };
 
 export const teamApi = {
-  getAll: () => api.get('/team'),
+  getAll: () => api.get('/public/team'),
 };
 
 export const contactApi = {
@@ -58,7 +64,7 @@ export const contactApi = {
     phone: string;
     subject: string;
     message: string;
-  }) => api.post('/contact', data),
+  }) => api.post('/public/contact', data),
 };
 
 export const authApi = {
@@ -111,7 +117,21 @@ export const adminSettingsApi = {
 };
 
 export const adminContactsApi = {
-  getAll: () => api.get('/admin/contacts'),
+  getAll: (params?: { status?: string; page?: number }) =>
+    api.get('/admin/contacts', { params }),
+  getById: (id: number) => api.get(`/admin/contacts/${id}`),
+  markAsRead: (id: number) => api.patch(`/admin/contacts/${id}/read`),
+};
+
+export const uploadApi = {
+  uploadFile: (file: File, folder?: string) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    if (folder) formData.append('folder', folder);
+    return api.post('/admin/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
 };
 
 export default api;

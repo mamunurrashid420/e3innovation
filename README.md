@@ -133,13 +133,13 @@ The Laravel backend implementation is fully documented in:
 #### Public Endpoints
 
 ```
-GET    /api/home                 # Get homepage data
-GET    /api/services             # List all services
-GET    /api/services/{slug}      # Get service by slug
-GET    /api/projects             # List all projects
-GET    /api/projects/{slug}      # Get project by slug
-GET    /api/team                 # List team members
-POST   /api/contact              # Submit contact form
+GET    /api/public/settings      # Get site settings
+GET    /api/public/services      # List all services
+GET    /api/public/services/{slug} # Get service by slug
+GET    /api/public/projects      # List all projects (with filtering)
+GET    /api/public/projects/{slug} # Get project by slug
+GET    /api/public/team          # List team members
+POST   /api/public/contact       # Submit contact form
 ```
 
 #### Authentication
@@ -179,7 +179,14 @@ PUT    /api/admin/settings
 
 # Contacts
 GET    /api/admin/contacts
+GET    /api/admin/contacts/{id}
+PATCH  /api/admin/contacts/{id}/read
+
+# File Upload
+POST   /api/admin/upload
 ```
+
+For complete API documentation, see **BACKEND_INTEGRATION_GUIDE.md**
 
 ### Database Configuration
 
