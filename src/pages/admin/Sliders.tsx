@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import AdminLayout from '../../components/AdminLayout';
+import FileUpload from '../../components/FileUpload';
 import { api } from '../../services/api';
 import FormInput from '../../components/FormInput';
 import Alert from '../../components/Alert';
@@ -177,15 +178,27 @@ export default function AdminSliders() {
                 rows={3}
               />
 
-              <FormInput
-                label="Background Image URL"
-                name="image"
-                type="text"
-                value={formData.image}
-                onChange={handleChange}
-                placeholder="https://images.pexels.com/..."
-                required
+              {/* File Upload Component */}
+              <FileUpload
+                label="Background Image"
+                onUploadSuccess={(fileUrl, filePath) => {
+                  setFormData({ ...formData, image: filePath });
+                  setAlert({ type: 'success', message: 'Image uploaded successfully!' });
+                }}
+                onUploadError={(error) => {
+                  setAlert({ type: 'error', message: `Upload failed: ${error}` });
+                }}
+                folder="sliders"
+                maxSize={3}
               />
+
+              {formData.image && (
+                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                  <p className="text-sm text-blue-700">
+                    <strong>Image Path:</strong> {formData.image}
+                  </p>
+                </div>
+              )}
 
               <FormInput
                 label="Button Text (Optional)"

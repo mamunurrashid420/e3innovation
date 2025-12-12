@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import Slider from '../components/Slider';
 import Hero from '../components/Hero';
@@ -20,20 +20,26 @@ const Home = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [slidersData, servicesData, projectsData, teamData] = await Promise.all([
+        // Fetch critical data first
+        const [slidersData, servicesData] = await Promise.all([
           api.sliders.getActive(),
           api.services.getAll(),
-          api.projects.getAll({ per_page: 6 }),
-          api.team.getAll(),
         ]);
 
         setSliders(slidersData || []);
         setServices((servicesData || []).slice(0, 4));
+        setLoading(false);
+
+        // Fetch non-critical data after
+        const [projectsData, teamData] = await Promise.all([
+          api.projects.getAll({ per_page: 6 }),
+          api.team.getAll(),
+        ]);
+
         setProjects((projectsData || []).slice(0, 6));
         setTeam((teamData || []).slice(0, 4));
       } catch (error) {
         console.error('Error fetching home data:', error);
-      } finally {
         setLoading(false);
       }
     };
@@ -41,15 +47,8 @@ const Home = () => {
     fetchData();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
-      </div>
-    );
-  }
-
-  const defaultSettings = {
+  // Memoize default settings
+  const defaultSettings = useMemo(() => ({
     site_title: 'E3 Innovation',
     hero_title: 'E3 INNOVATION - Your Trusted Software Development Partner',
     hero_subtitle: 'We deliver innovative software solutions that transform businesses. Expert team, agile methodology, and cutting-edge technology.',
@@ -61,7 +60,20 @@ const Home = () => {
       address: '',
     },
     footer_text: '',
-  };
+  }), []);
+
+  // Memoize services to prevent unnecessary re-renders
+  const memoizedServices = useMemo(() => services, [services]);
+  const memoizedProjects = useMemo(() => projects, [projects]);
+  const memoizedTeam = useMemo(() => team, [team]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen">

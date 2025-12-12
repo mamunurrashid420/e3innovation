@@ -1,8 +1,10 @@
 {
-  "name": "vite-react-typescript-starter",
+  "name": "e3innovation-limited",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
+  "description": "E3Innovation Limited - Corporate Website",
+  "author": "E3Innovation Limited",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

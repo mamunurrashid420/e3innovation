@@ -1,6 +1,11 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { User } from '@supabase/supabase-js';
-import { supabase } from '../lib/supabase';
+import { laravelApi } from '../services/laravelApi';
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
 
 interface AuthContextType {
   user: User | null;
@@ -16,28 +21,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    // Check if user is already logged in
+    const checkAuth = async () => {
+      try {
+        const token = localStorage.getItem('admin_token');
+        if (token) {
+          const userData = await laravelApi.auth.me();
+          setUser(userData);
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        localStorage.removeItem('admin_token');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      (async () => {
-        setUser(session?.user ?? null);
-      })();
-    });
-
-    return () => subscription.unsubscribe();
+    checkAuth();
   }, []);
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) throw error;
+      const userData = await laravelApi.auth.login(email, password);
+      setUser(userData.user);
       return { error: null };
     } catch (error) {
       return { error: error as Error };
@@ -45,7 +51,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    try {
+      await laravelApi.auth.logout();
+      setUser(null);
+    } catch (error) {
+      console.error('Logout error:', error);
+      setUser(null);
+      localStorage.removeItem('admin_token');
+    }
   };
 
   return (

@@ -4,6 +4,7 @@ import { api } from '../../services/api';
 import { TeamMember } from '../../types';
 import { Plus, Edit, Trash2, Save, X } from 'lucide-react';
 import FormInput from '../../components/FormInput';
+import FileUpload from '../../components/FileUpload';
 import Alert from '../../components/Alert';
 
 export default function AdminTeamMembers() {
@@ -160,12 +161,14 @@ export default function AdminTeamMembers() {
             <div className="space-y-4">
               <FormInput
                 label="Name"
+                name="name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 required
               />
               <FormInput
                 label="Role"
+                name="role"
                 value={formData.role}
                 onChange={(e) => setFormData({ ...formData, role: e.target.value })}
                 required
@@ -173,21 +176,39 @@ export default function AdminTeamMembers() {
               />
               <FormInput
                 label="Bio"
+                name="bio"
+                type="textarea"
                 value={formData.bio}
                 onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                 required
-                textarea
                 rows={3}
               />
-              <FormInput
-                label="Image URL"
-                value={formData.image}
-                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                required
-                placeholder="https://images.unsplash.com/..."
+
+              {/* File Upload Component */}
+              <FileUpload
+                label="Team Member Photo"
+                onUploadSuccess={(fileUrl, filePath) => {
+                  setFormData({ ...formData, image: filePath });
+                  setAlert({ type: 'success', message: 'Photo uploaded successfully!' });
+                }}
+                onUploadError={(error) => {
+                  setAlert({ type: 'error', message: `Upload failed: ${error}` });
+                }}
+                folder="team"
+                maxSize={2}
               />
+
+              {formData.image && (
+                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                  <p className="text-sm text-blue-700">
+                    <strong>Image Path:</strong> {formData.image}
+                  </p>
+                </div>
+              )}
+
               <FormInput
                 label="Email"
+                name="email"
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -195,18 +216,21 @@ export default function AdminTeamMembers() {
               />
               <FormInput
                 label="LinkedIn URL (optional)"
+                name="linkedin"
                 value={formData.linkedin}
                 onChange={(e) => setFormData({ ...formData, linkedin: e.target.value })}
                 placeholder="https://linkedin.com/in/..."
               />
               <FormInput
                 label="Twitter URL (optional)"
+                name="twitter"
                 value={formData.twitter}
                 onChange={(e) => setFormData({ ...formData, twitter: e.target.value })}
                 placeholder="https://twitter.com/..."
               />
               <FormInput
                 label="GitHub URL (optional)"
+                name="github"
                 value={formData.github}
                 onChange={(e) => setFormData({ ...formData, github: e.target.value })}
                 placeholder="https://github.com/..."

@@ -4,6 +4,7 @@ import { api } from '../../services/api';
 import { Project } from '../../types';
 import { Plus, Edit, Trash2, Save, X } from 'lucide-react';
 import FormInput from '../../components/FormInput';
+import FileUpload from '../../components/FileUpload';
 import Alert from '../../components/Alert';
 
 export default function AdminProjects() {
@@ -160,34 +161,54 @@ export default function AdminProjects() {
             <div className="space-y-4">
               <FormInput
                 label="Title"
+                name="title"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 required
               />
               <FormInput
                 label="Description"
+                name="description"
+                type="textarea"
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 required
-                textarea
                 rows={3}
               />
               <FormInput
                 label="Category"
+                name="category"
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                 required
                 placeholder="e.g., Web Development, Mobile App, AI/ML"
               />
-              <FormInput
-                label="Image URL"
-                value={formData.image}
-                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                required
-                placeholder="https://images.unsplash.com/..."
+
+              {/* File Upload Component */}
+              <FileUpload
+                label="Project Featured Image"
+                onUploadSuccess={(fileUrl, filePath) => {
+                  setFormData({ ...formData, image: filePath });
+                  setAlert({ type: 'success', message: 'Image uploaded successfully!' });
+                }}
+                onUploadError={(error) => {
+                  setAlert({ type: 'error', message: `Upload failed: ${error}` });
+                }}
+                folder="projects"
+                maxSize={3}
               />
+
+              {formData.image && (
+                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                  <p className="text-sm text-blue-700">
+                    <strong>Image Path:</strong> {formData.image}
+                  </p>
+                </div>
+              )}
+
               <FormInput
                 label="Technologies (comma-separated)"
+                name="technologies"
                 value={formData.technologies}
                 onChange={(e) => setFormData({ ...formData, technologies: e.target.value })}
                 required
@@ -195,20 +216,23 @@ export default function AdminProjects() {
               />
               <FormInput
                 label="Features (one per line)"
+                name="features"
+                type="textarea"
                 value={formData.features}
                 onChange={(e) => setFormData({ ...formData, features: e.target.value })}
                 required
-                textarea
                 rows={5}
               />
               <FormInput
                 label="GitHub URL (optional)"
+                name="githubUrl"
                 value={formData.githubUrl}
                 onChange={(e) => setFormData({ ...formData, githubUrl: e.target.value })}
                 placeholder="https://github.com/..."
               />
               <FormInput
                 label="Live URL (optional)"
+                name="liveUrl"
                 value={formData.liveUrl}
                 onChange={(e) => setFormData({ ...formData, liveUrl: e.target.value })}
                 placeholder="https://..."
