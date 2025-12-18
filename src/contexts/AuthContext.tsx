@@ -18,22 +18,26 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Check if user is already logged in
     const checkAuth = async () => {
+      const token = localStorage.getItem('admin_token');
+      if (!token) return;
+
       try {
-        const token = localStorage.getItem('admin_token');
-        if (token) {
-          const userData = await laravelApi.auth.getUser();
-          setUser(userData);
-        }
+        const timeoutPromise = new Promise<never>((_, reject) => {
+          setTimeout(() => reject(new Error('Auth check timeout')), 2000);
+        });
+
+        const userData = await Promise.race([
+          laravelApi.auth.getUser(),
+          timeoutPromise
+        ]);
+        setUser(userData as User);
       } catch (error) {
         console.error('Auth check failed:', error);
         localStorage.removeItem('admin_token');
-      } finally {
-        setLoading(false);
       }
     };
 

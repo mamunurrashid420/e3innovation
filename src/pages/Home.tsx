@@ -20,26 +20,28 @@ const Home = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch critical data first
-        const [slidersData, servicesData] = await Promise.all([
-          api.sliders.getAll(),
-          api.services.getAll(),
-        ]);
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error('Data fetch timeout')), 8000);
+        });
 
-        setSliders(slidersData || []);
-        setServices((servicesData || []).slice(0, 4));
-        setLoading(false);
+        const dataPromise = async () => {
+          const [slidersData, servicesData, projectsData, teamData] = await Promise.all([
+            api.sliders.getAll().catch(err => { console.error('Sliders error:', err); return []; }),
+            api.services.getAll().catch(err => { console.error('Services error:', err); return []; }),
+            api.projects.getAll({ per_page: 6 }).catch(err => { console.error('Projects error:', err); return []; }),
+            api.team.getAll().catch(err => { console.error('Team error:', err); return []; }),
+          ]);
 
-        // Fetch non-critical data after
-        const [projectsData, teamData] = await Promise.all([
-          api.projects.getAll({ per_page: 6 }),
-          api.team.getAll(),
-        ]);
+          setSliders(slidersData || []);
+          setServices((servicesData || []).slice(0, 4));
+          setProjects((projectsData || []).slice(0, 6));
+          setTeam((teamData || []).slice(0, 4));
+        };
 
-        setProjects((projectsData || []).slice(0, 6));
-        setTeam((teamData || []).slice(0, 4));
+        await Promise.race([dataPromise(), timeoutPromise]);
       } catch (error) {
         console.error('Error fetching home data:', error);
+      } finally {
         setLoading(false);
       }
     };
