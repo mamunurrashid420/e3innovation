@@ -15,34 +15,23 @@ const Home = () => {
   const [services, setServices] = useState<Service[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [team, setTeam] = useState<TeamMember[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('Data fetch timeout')), 8000);
-        });
+        const [slidersData, servicesData, projectsData, teamData] = await Promise.all([
+          api.sliders.getAll().catch(err => { console.error('Sliders error:', err); return []; }),
+          api.services.getAll().catch(err => { console.error('Services error:', err); return []; }),
+          api.projects.getAll({ per_page: 6 }).catch(err => { console.error('Projects error:', err); return []; }),
+          api.team.getAll().catch(err => { console.error('Team error:', err); return []; }),
+        ]);
 
-        const dataPromise = async () => {
-          const [slidersData, servicesData, projectsData, teamData] = await Promise.all([
-            api.sliders.getAll().catch(err => { console.error('Sliders error:', err); return []; }),
-            api.services.getAll().catch(err => { console.error('Services error:', err); return []; }),
-            api.projects.getAll({ per_page: 6 }).catch(err => { console.error('Projects error:', err); return []; }),
-            api.team.getAll().catch(err => { console.error('Team error:', err); return []; }),
-          ]);
-
-          setSliders(slidersData || []);
-          setServices((servicesData || []).slice(0, 4));
-          setProjects((projectsData || []).slice(0, 6));
-          setTeam((teamData || []).slice(0, 4));
-        };
-
-        await Promise.race([dataPromise(), timeoutPromise]);
+        setSliders(slidersData || []);
+        setServices((servicesData || []).slice(0, 4));
+        setProjects((projectsData || []).slice(0, 6));
+        setTeam((teamData || []).slice(0, 4));
       } catch (error) {
         console.error('Error fetching home data:', error);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -68,14 +57,6 @@ const Home = () => {
   const memoizedServices = useMemo(() => services, [services]);
   const memoizedProjects = useMemo(() => projects, [projects]);
   const memoizedTeam = useMemo(() => team, [team]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen">
