@@ -44,24 +44,12 @@ function slugify(text: string): string {
 }
 
 export const laravelApi = {
-  // ============ PUBLIC ENDPOINTS ============
-
-  settings: {
-    getAll: async () => {
-      try {
-        const { data } = await apiClient.get('/public/settings');
-        return data.data || data;
-      } catch (error) {
-        console.error('Failed to fetch settings:', error);
-        throw error;
-      }
-    },
-  },
+  // ============ SERVICES ============
 
   services: {
     getAll: async () => {
       try {
-        const { data } = await apiClient.get('/public/services');
+        const { data } = await apiClient.get('/services');
         return data.data || [];
       } catch (error) {
         console.error('Failed to fetch services:', error);
@@ -71,7 +59,7 @@ export const laravelApi = {
 
     getBySlug: async (slug: string) => {
       try {
-        const { data } = await apiClient.get(`/public/services/${slug}`);
+        const { data } = await apiClient.get(`/services/${slug}`);
         return data.data || null;
       } catch (error) {
         console.error('Failed to fetch service:', error);
@@ -79,10 +67,9 @@ export const laravelApi = {
       }
     },
 
-    // Admin endpoints
     create: async (serviceData: any) => {
       try {
-        const { data } = await apiClient.post('/admin/services', serviceData);
+        const { data } = await apiClient.post('/services', serviceData);
         return data.data;
       } catch (error) {
         console.error('Failed to create service:', error);
@@ -92,7 +79,7 @@ export const laravelApi = {
 
     update: async (id: number, serviceData: any) => {
       try {
-        const { data } = await apiClient.put(`/admin/services/${id}`, serviceData);
+        const { data } = await apiClient.put(`/services/${id}`, serviceData);
         return data.data;
       } catch (error) {
         console.error('Failed to update service:', error);
@@ -102,29 +89,21 @@ export const laravelApi = {
 
     delete: async (id: number) => {
       try {
-        await apiClient.delete(`/admin/services/${id}`);
+        await apiClient.delete(`/services/${id}`);
         return { success: true };
       } catch (error) {
         console.error('Failed to delete service:', error);
         throw error;
       }
     },
-
-    adminGetAll: async () => {
-      try {
-        const { data } = await apiClient.get('/admin/services');
-        return data.data || [];
-      } catch (error) {
-        console.error('Failed to fetch admin services:', error);
-        throw error;
-      }
-    },
   },
+
+  // ============ PROJECTS ============
 
   projects: {
     getAll: async (params?: any) => {
       try {
-        const { data } = await apiClient.get('/public/projects', { params });
+        const { data } = await apiClient.get('/projects', { params });
         return data.data || [];
       } catch (error) {
         console.error('Failed to fetch projects:', error);
@@ -134,7 +113,7 @@ export const laravelApi = {
 
     getBySlug: async (slug: string) => {
       try {
-        const { data } = await apiClient.get(`/public/projects/${slug}`);
+        const { data } = await apiClient.get(`/projects/${slug}`);
         return data.data || null;
       } catch (error) {
         console.error('Failed to fetch project:', error);
@@ -142,10 +121,9 @@ export const laravelApi = {
       }
     },
 
-    // Admin endpoints
     create: async (projectData: any) => {
       try {
-        const { data } = await apiClient.post('/admin/projects', projectData);
+        const { data } = await apiClient.post('/projects', projectData);
         return data.data;
       } catch (error) {
         console.error('Failed to create project:', error);
@@ -155,7 +133,7 @@ export const laravelApi = {
 
     update: async (id: number, projectData: any) => {
       try {
-        const { data } = await apiClient.put(`/admin/projects/${id}`, projectData);
+        const { data } = await apiClient.put(`/projects/${id}`, projectData);
         return data.data;
       } catch (error) {
         console.error('Failed to update project:', error);
@@ -165,29 +143,21 @@ export const laravelApi = {
 
     delete: async (id: number) => {
       try {
-        await apiClient.delete(`/admin/projects/${id}`);
+        await apiClient.delete(`/projects/${id}`);
         return { success: true };
       } catch (error) {
         console.error('Failed to delete project:', error);
         throw error;
       }
     },
-
-    adminGetAll: async () => {
-      try {
-        const { data } = await apiClient.get('/admin/projects');
-        return data.data || [];
-      } catch (error) {
-        console.error('Failed to fetch admin projects:', error);
-        throw error;
-      }
-    },
   },
+
+  // ============ TEAM MEMBERS ============
 
   team: {
     getAll: async () => {
       try {
-        const { data } = await apiClient.get('/public/team');
+        const { data } = await apiClient.get('/team-members');
         return data.data || [];
       } catch (error) {
         console.error('Failed to fetch team:', error);
@@ -195,10 +165,19 @@ export const laravelApi = {
       }
     },
 
-    // Admin endpoints
+    getById: async (id: number) => {
+      try {
+        const { data } = await apiClient.get(`/team-members/${id}`);
+        return data.data || null;
+      } catch (error) {
+        console.error('Failed to fetch team member:', error);
+        throw error;
+      }
+    },
+
     create: async (memberData: any) => {
       try {
-        const { data } = await apiClient.post('/admin/team', memberData);
+        const { data } = await apiClient.post('/team-members', memberData);
         return data.data;
       } catch (error) {
         console.error('Failed to create team member:', error);
@@ -208,7 +187,7 @@ export const laravelApi = {
 
     update: async (id: number, memberData: any) => {
       try {
-        const { data } = await apiClient.put(`/admin/team/${id}`, memberData);
+        const { data } = await apiClient.put(`/team-members/${id}`, memberData);
         return data.data;
       } catch (error) {
         console.error('Failed to update team member:', error);
@@ -218,29 +197,21 @@ export const laravelApi = {
 
     delete: async (id: number) => {
       try {
-        await apiClient.delete(`/admin/team/${id}`);
+        await apiClient.delete(`/team-members/${id}`);
         return { success: true };
       } catch (error) {
         console.error('Failed to delete team member:', error);
         throw error;
       }
     },
-
-    adminGetAll: async () => {
-      try {
-        const { data } = await apiClient.get('/admin/team');
-        return data.data || [];
-      } catch (error) {
-        console.error('Failed to fetch admin team:', error);
-        throw error;
-      }
-    },
   },
+
+  // ============ CONTACT MESSAGES ============
 
   contact: {
     submit: async (messageData: any) => {
       try {
-        const { data } = await apiClient.post('/public/contact', messageData);
+        const { data } = await apiClient.post('/contact', messageData);
         return data.data;
       } catch (error) {
         console.error('Failed to submit contact message:', error);
@@ -248,10 +219,9 @@ export const laravelApi = {
       }
     },
 
-    // Admin endpoints
     getAll: async (params?: any) => {
       try {
-        const { data } = await apiClient.get('/admin/contacts', { params });
+        const { data } = await apiClient.get('/contact/messages', { params });
         return data.data || [];
       } catch (error) {
         console.error('Failed to fetch contacts:', error);
@@ -261,63 +231,34 @@ export const laravelApi = {
 
     markAsRead: async (id: number) => {
       try {
-        const { data } = await apiClient.patch(`/admin/contacts/${id}/read`);
+        const { data } = await apiClient.put(`/contact/messages/${id}/mark-read`);
         return data.data;
       } catch (error) {
         console.error('Failed to mark contact as read:', error);
         throw error;
       }
     },
+
+    delete: async (id: number) => {
+      try {
+        await apiClient.delete(`/contact/messages/${id}`);
+        return { success: true };
+      } catch (error) {
+        console.error('Failed to delete contact message:', error);
+        throw error;
+      }
+    },
   },
+
+  // ============ SLIDERS ============
 
   sliders: {
     getAll: async () => {
       try {
-        const { data } = await apiClient.get('/public/sliders');
+        const { data } = await apiClient.get('/sliders');
         return data.data || [];
       } catch (error) {
         console.error('Failed to fetch sliders:', error);
-        throw error;
-      }
-    },
-
-    getActive: async () => {
-      try {
-        const { data } = await apiClient.get('/public/sliders?active=true');
-        return data.data || [];
-      } catch (error) {
-        console.error('Failed to fetch active sliders:', error);
-        throw error;
-      }
-    },
-
-    // Admin endpoints
-    create: async (sliderData: any) => {
-      try {
-        const { data } = await apiClient.post('/admin/sliders', sliderData);
-        return data.data;
-      } catch (error) {
-        console.error('Failed to create slider:', error);
-        throw error;
-      }
-    },
-
-    update: async (id: number, sliderData: any) => {
-      try {
-        const { data } = await apiClient.put(`/admin/sliders/${id}`, sliderData);
-        return data.data;
-      } catch (error) {
-        console.error('Failed to update slider:', error);
-        throw error;
-      }
-    },
-
-    delete: async (id: number) => {
-      try {
-        await apiClient.delete(`/admin/sliders/${id}`);
-        return { success: true };
-      } catch (error) {
-        console.error('Failed to delete slider:', error);
         throw error;
       }
     },
@@ -328,6 +269,56 @@ export const laravelApi = {
         return data.data || [];
       } catch (error) {
         console.error('Failed to fetch admin sliders:', error);
+        throw error;
+      }
+    },
+
+    create: async (sliderData: any) => {
+      try {
+        const { data } = await apiClient.post('/sliders', sliderData);
+        return data.data;
+      } catch (error) {
+        console.error('Failed to create slider:', error);
+        throw error;
+      }
+    },
+
+    update: async (id: number, sliderData: any) => {
+      try {
+        const { data } = await apiClient.put(`/sliders/${id}`, sliderData);
+        return data.data;
+      } catch (error) {
+        console.error('Failed to update slider:', error);
+        throw error;
+      }
+    },
+
+    delete: async (id: number) => {
+      try {
+        await apiClient.delete(`/sliders/${id}`);
+        return { success: true };
+      } catch (error) {
+        console.error('Failed to delete slider:', error);
+        throw error;
+      }
+    },
+
+    toggleStatus: async (id: number) => {
+      try {
+        const { data } = await apiClient.put(`/sliders/${id}/toggle-status`);
+        return data.data;
+      } catch (error) {
+        console.error('Failed to toggle slider status:', error);
+        throw error;
+      }
+    },
+
+    reorder: async (orderData: Array<{ id: number; order: number }>) => {
+      try {
+        const { data } = await apiClient.put('/sliders/reorder', { sliders: orderData });
+        return data.data;
+      } catch (error) {
+        console.error('Failed to reorder sliders:', error);
         throw error;
       }
     },
@@ -359,18 +350,31 @@ export const laravelApi = {
       }
     },
 
-    me: async () => {
+    getUser: async () => {
       try {
-        const { data } = await apiClient.get('/auth/me');
+        const { data } = await apiClient.get('/auth/user');
         return data.data;
       } catch (error) {
         console.error('Failed to fetch user:', error);
         throw error;
       }
     },
+
+    refresh: async () => {
+      try {
+        const { data } = await apiClient.post('/auth/refresh');
+        if (data.data?.access_token) {
+          localStorage.setItem('admin_token', data.data.access_token);
+        }
+        return data.data;
+      } catch (error) {
+        console.error('Failed to refresh token:', error);
+        throw error;
+      }
+    },
   },
 
-  // ============ FILE UPLOAD ============
+  // ============ FILE UPLOAD & MEDIA ============
 
   upload: {
     file: async (file: File, folder?: string) => {
@@ -381,7 +385,7 @@ export const laravelApi = {
           formData.append('folder', folder);
         }
 
-        const { data } = await apiClient.post('/admin/upload', formData, {
+        const { data } = await apiClient.post('/upload', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
@@ -389,6 +393,52 @@ export const laravelApi = {
         return data.data;
       } catch (error) {
         console.error('File upload failed:', error);
+        throw error;
+      }
+    },
+  },
+
+  media: {
+    upload: async (file: File, folder?: string) => {
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        if (folder) {
+          formData.append('folder', folder);
+        }
+
+        const { data } = await apiClient.post('/media/upload', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        return data.data;
+      } catch (error) {
+        console.error('Media upload failed:', error);
+        throw error;
+      }
+    },
+
+    delete: async (mediaId: number) => {
+      try {
+        await apiClient.delete(`/media/${mediaId}`);
+        return { success: true };
+      } catch (error) {
+        console.error('Failed to delete media:', error);
+        throw error;
+      }
+    },
+  },
+
+  // ============ ADMIN DASHBOARD ============
+
+  dashboard: {
+    getStats: async () => {
+      try {
+        const { data } = await apiClient.get('/admin/dashboard/stats');
+        return data.data;
+      } catch (error) {
+        console.error('Failed to fetch dashboard stats:', error);
         throw error;
       }
     },
