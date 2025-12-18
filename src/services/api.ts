@@ -1,4 +1,3 @@
-// Re-export Supabase API as the main API
-export { supabaseApi as api } from './supabaseApi';
-export { default as supabaseApi } from './supabaseApi';
+// Re-export Laravel API as the main API
+export { laravelApi as api } from './laravelApi';
 export { default as laravelApi } from './laravelApi';

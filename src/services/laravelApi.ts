@@ -256,26 +256,63 @@ export const laravelApi = {
     getAll: async () => {
       try {
         const { data } = await apiClient.get('/sliders');
-        return data.data || [];
+        const sliders = data.data || [];
+        return sliders.map((slider: any) => ({
+          ...slider,
+          image: `${API_BASE_URL.replace('/api', '')}/${slider.image_path}`,
+          order_index: slider.display_order,
+        }));
       } catch (error) {
         console.error('Failed to fetch sliders:', error);
-        throw error;
+        return [];
       }
     },
 
     adminGetAll: async () => {
       try {
         const { data } = await apiClient.get('/admin/sliders');
-        return data.data || [];
+        const sliders = data.data || [];
+        return sliders.map((slider: any) => ({
+          ...slider,
+          image: `${API_BASE_URL.replace('/api', '')}/${slider.image_path}`,
+          order_index: slider.display_order,
+        }));
       } catch (error) {
         console.error('Failed to fetch admin sliders:', error);
-        throw error;
+        return [];
       }
     },
 
     create: async (sliderData: any) => {
       try {
-        const { data } = await apiClient.post('/sliders', sliderData);
+        const formData = new FormData();
+        formData.append('title', sliderData.title);
+        formData.append('subtitle', sliderData.subtitle || '');
+        formData.append('description', sliderData.description || '');
+
+        if (sliderData.imageFile) {
+          formData.append('image', sliderData.imageFile);
+        }
+
+        if (sliderData.button_text) {
+          formData.append('button_text', sliderData.button_text);
+        }
+
+        if (sliderData.button_link) {
+          formData.append('button_link', sliderData.button_link);
+        }
+
+        if (sliderData.order_index !== undefined) {
+          formData.append('display_order', sliderData.order_index.toString());
+        }
+
+        formData.append('is_active', sliderData.is_active ? '1' : '0');
+
+        const { data } = await apiClient.post('/admin/sliders', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
         return data.data;
       } catch (error) {
         console.error('Failed to create slider:', error);
@@ -285,7 +322,35 @@ export const laravelApi = {
 
     update: async (id: number, sliderData: any) => {
       try {
-        const { data } = await apiClient.put(`/sliders/${id}`, sliderData);
+        const formData = new FormData();
+        formData.append('_method', 'PUT');
+        formData.append('title', sliderData.title);
+        formData.append('subtitle', sliderData.subtitle || '');
+        formData.append('description', sliderData.description || '');
+
+        if (sliderData.imageFile) {
+          formData.append('image', sliderData.imageFile);
+        }
+
+        if (sliderData.button_text) {
+          formData.append('button_text', sliderData.button_text);
+        }
+
+        if (sliderData.button_link) {
+          formData.append('button_link', sliderData.button_link);
+        }
+
+        if (sliderData.order_index !== undefined) {
+          formData.append('display_order', sliderData.order_index.toString());
+        }
+
+        formData.append('is_active', sliderData.is_active ? '1' : '0');
+
+        const { data } = await apiClient.post(`/admin/sliders/${id}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
         return data.data;
       } catch (error) {
         console.error('Failed to update slider:', error);
@@ -295,7 +360,7 @@ export const laravelApi = {
 
     delete: async (id: number) => {
       try {
-        await apiClient.delete(`/sliders/${id}`);
+        await apiClient.delete(`/admin/sliders/${id}`);
         return { success: true };
       } catch (error) {
         console.error('Failed to delete slider:', error);
@@ -305,7 +370,7 @@ export const laravelApi = {
 
     toggleStatus: async (id: number) => {
       try {
-        const { data } = await apiClient.put(`/sliders/${id}/toggle-status`);
+        const { data } = await apiClient.put(`/admin/sliders/${id}/toggle-status`);
         return data.data;
       } catch (error) {
         console.error('Failed to toggle slider status:', error);
@@ -315,7 +380,7 @@ export const laravelApi = {
 
     reorder: async (orderData: Array<{ id: number; order: number }>) => {
       try {
-        const { data } = await apiClient.put('/sliders/reorder', { sliders: orderData });
+        const { data } = await apiClient.put('/admin/sliders/reorder', { sliders: orderData });
         return data.data;
       } catch (error) {
         console.error('Failed to reorder sliders:', error);

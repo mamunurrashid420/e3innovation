@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import AdminLayout from '../../components/AdminLayout';
-import FileUpload from '../../components/FileUpload';
 import { api } from '../../services/api';
 import FormInput from '../../components/FormInput';
 import Alert from '../../components/Alert';
@@ -12,10 +11,11 @@ export default function AdminSliders() {
   const [showForm, setShowForm] = useState(false);
   const [editingSlider, setEditingSlider] = useState<any>(null);
   const [alert, setAlert] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<any>({
     title: '',
     subtitle: '',
     image: '',
+    imageFile: null,
     button_text: '',
     button_link: '',
     order_index: 0,
@@ -28,7 +28,7 @@ export default function AdminSliders() {
 
   const fetchSliders = async () => {
     try {
-      const data = await api.sliders.getAll();
+      const data = await api.sliders.adminGetAll();
       setSliders(data || []);
     } catch (error) {
       console.error('Failed to fetch sliders:', error);
@@ -69,6 +69,7 @@ export default function AdminSliders() {
         title: '',
         subtitle: '',
         image: '',
+        imageFile: null,
         button_text: '',
         button_link: '',
         order_index: 0,
@@ -117,11 +118,16 @@ export default function AdminSliders() {
       title: '',
       subtitle: '',
       image: '',
+      imageFile: null,
       button_text: '',
       button_link: '',
       order_index: 0,
       is_active: true,
     });
+  };
+
+  const handleFileSelect = (file: File) => {
+    setFormData({ ...formData, imageFile: file, image: URL.createObjectURL(file) });
   };
 
   return (
@@ -178,27 +184,31 @@ export default function AdminSliders() {
                 rows={3}
               />
 
-              {/* File Upload Component */}
-              <FileUpload
-                label="Background Image"
-                onUploadSuccess={(fileUrl, filePath) => {
-                  setFormData({ ...formData, image: filePath });
-                  setAlert({ type: 'success', message: 'Image uploaded successfully!' });
-                }}
-                onUploadError={(error) => {
-                  setAlert({ type: 'error', message: `Upload failed: ${error}` });
-                }}
-                folder="sliders"
-                maxSize={3}
-              />
-
-              {formData.image && (
-                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                  <p className="text-sm text-blue-700">
-                    <strong>Image Path:</strong> {formData.image}
-                  </p>
-                </div>
-              )}
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-slate-700">
+                  Background Image *
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      handleFileSelect(e.target.files[0]);
+                    }
+                  }}
+                  className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                  required={!editingSlider}
+                />
+                {formData.image && (
+                  <div className="mt-2">
+                    <img
+                      src={formData.image}
+                      alt="Preview"
+                      className="w-full max-w-md h-48 object-cover rounded-lg border border-slate-200"
+                    />
+                  </div>
+                )}
+              </div>
 
               <FormInput
                 label="Button Text (Optional)"
