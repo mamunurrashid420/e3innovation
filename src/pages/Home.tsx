@@ -22,7 +22,7 @@ const Home = () => {
       try {
         // Fetch critical data first
         const [slidersData, servicesData] = await Promise.all([
-          api.sliders.getActive(),
+          api.sliders.getAll(),
           api.services.getAll(),
         ]);
 

@@ -26,7 +26,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         const token = localStorage.getItem('admin_token');
         if (token) {
-          const userData = await laravelApi.auth.me();
+          const userData = await laravelApi.auth.getUser();
           setUser(userData);
         }
       } catch (error) {
