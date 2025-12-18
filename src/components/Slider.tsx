@@ -51,7 +51,7 @@ export default function Slider({ slides }: SliderProps) {
   const currentSlide = slides[currentIndex];
 
   return (
-    <div className="relative w-full h-[600px] overflow-hidden">
+    <div className="relative w-full h-[600px] overflow-hidden bg-gray-900">
       <div
         className="absolute inset-0 bg-cover bg-center transition-all duration-500"
         style={{

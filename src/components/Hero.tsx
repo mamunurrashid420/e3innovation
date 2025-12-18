@@ -10,7 +10,7 @@ interface HeroProps {
 const Hero = ({ title, subtitle, backgroundImage, showCTA = true }: HeroProps) => {
   return (
     <div
-      className="relative bg-gradient-to-r from-gray-900 to-gray-800 text-white py-24 md:py-32 mt-16"
+      className="relative bg-gradient-to-r from-gray-900 to-gray-800 text-white py-24 md:py-32"
       style={
         backgroundImage
           ? {

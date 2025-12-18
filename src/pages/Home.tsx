@@ -59,7 +59,7 @@ const Home = () => {
   const memoizedTeam = useMemo(() => team, [team]);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-white">
       {sliders.length > 0 ? (
         <Slider slides={sliders} />
       ) : (
