@@ -255,13 +255,20 @@ export const laravelApi = {
   sliders: {
     getAll: async () => {
       try {
-        const { data } = await apiClient.get('/sliders');
-        const sliders = data.data || [];
-        return sliders.map((slider: any) => ({
-          ...slider,
-          image: `${API_BASE_URL.replace('/api', '')}/${slider.image_path}`,
-          order_index: slider.display_order,
+        const { data } = await apiClient.get('/public/sliders');
+        console.log('Sliders API Response:', data);
+        const sliders = data.data || data || [];
+        const mappedSliders = sliders.map((slider: any) => ({
+          id: slider.id,
+          title: slider.title,
+          subtitle: slider.subtitle || slider.description || '',
+          image: slider.image_path ? `${API_BASE_URL.replace('/api', '')}/${slider.image_path}` : slider.image,
+          button_text: slider.button_text || '',
+          button_link: slider.button_link || '',
+          order_index: slider.display_order || slider.order_index || 0,
         }));
+        console.log('Mapped Sliders:', mappedSliders);
+        return mappedSliders;
       } catch (error) {
         console.error('Failed to fetch sliders:', error);
         return [];
@@ -288,10 +295,13 @@ export const laravelApi = {
         const formData = new FormData();
         formData.append('title', sliderData.title);
         formData.append('subtitle', sliderData.subtitle || '');
-        formData.append('description', sliderData.description || '');
+        formData.append('description', sliderData.subtitle || sliderData.description || '');
 
+        // Image is required for new slider
         if (sliderData.imageFile) {
           formData.append('image', sliderData.imageFile);
+        } else {
+          throw new Error('Image is required for creating a slider');
         }
 
         if (sliderData.button_text) {
@@ -302,11 +312,22 @@ export const laravelApi = {
           formData.append('button_link', sliderData.button_link);
         }
 
+        // Try both 'order' and 'display_order' field names
         if (sliderData.order_index !== undefined) {
-          formData.append('display_order', sliderData.order_index.toString());
+          formData.append('order', sliderData.order_index.toString());
         }
 
         formData.append('is_active', sliderData.is_active ? '1' : '0');
+
+        console.log('Creating slider with data:', {
+          title: sliderData.title,
+          subtitle: sliderData.subtitle,
+          hasImage: !!sliderData.imageFile,
+          button_text: sliderData.button_text,
+          button_link: sliderData.button_link,
+          order: sliderData.order_index,
+          is_active: sliderData.is_active,
+        });
 
         const { data } = await apiClient.post('/admin/sliders', formData, {
           headers: {
@@ -314,8 +335,9 @@ export const laravelApi = {
           },
         });
         return data.data;
-      } catch (error) {
+      } catch (error: any) {
         console.error('Failed to create slider:', error);
+        console.error('Error response:', error?.response?.data);
         throw error;
       }
     },
@@ -326,8 +348,9 @@ export const laravelApi = {
         formData.append('_method', 'PUT');
         formData.append('title', sliderData.title);
         formData.append('subtitle', sliderData.subtitle || '');
-        formData.append('description', sliderData.description || '');
+        formData.append('description', sliderData.subtitle || sliderData.description || '');
 
+        // Image is optional for update
         if (sliderData.imageFile) {
           formData.append('image', sliderData.imageFile);
         }
@@ -340,11 +363,23 @@ export const laravelApi = {
           formData.append('button_link', sliderData.button_link);
         }
 
+        // Try both 'order' and 'display_order' field names
         if (sliderData.order_index !== undefined) {
-          formData.append('display_order', sliderData.order_index.toString());
+          formData.append('order', sliderData.order_index.toString());
         }
 
         formData.append('is_active', sliderData.is_active ? '1' : '0');
+
+        console.log('Updating slider with data:', {
+          id,
+          title: sliderData.title,
+          subtitle: sliderData.subtitle,
+          hasNewImage: !!sliderData.imageFile,
+          button_text: sliderData.button_text,
+          button_link: sliderData.button_link,
+          order: sliderData.order_index,
+          is_active: sliderData.is_active,
+        });
 
         const { data } = await apiClient.post(`/admin/sliders/${id}`, formData, {
           headers: {
@@ -352,8 +387,9 @@ export const laravelApi = {
           },
         });
         return data.data;
-      } catch (error) {
+      } catch (error: any) {
         console.error('Failed to update slider:', error);
+        console.error('Error response:', error?.response?.data);
         throw error;
       }
     },

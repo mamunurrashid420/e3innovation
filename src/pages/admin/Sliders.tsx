@@ -54,6 +54,13 @@ export default function AdminSliders() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate image is selected for new slider
+    if (!editingSlider && !formData.imageFile) {
+      setAlert({ type: 'error', message: 'Please select an image for the slider.' });
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -78,8 +85,10 @@ export default function AdminSliders() {
       setEditingSlider(null);
       setShowForm(false);
       fetchSliders();
-    } catch (error) {
-      setAlert({ type: 'error', message: 'Failed to save slider. Please try again.' });
+    } catch (error: any) {
+      const errorMessage = error?.response?.data?.message || error?.message || 'Failed to save slider. Please try again.';
+      setAlert({ type: 'error', message: errorMessage });
+      console.error('Slider save error:', error);
     } finally {
       setLoading(false);
     }

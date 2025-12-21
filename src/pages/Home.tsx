@@ -5,7 +5,7 @@ import Hero from '../components/Hero';
 import ServiceCard from '../components/ServiceCard';
 import ProjectCard from '../components/ProjectCard';
 import TeamCard from '../components/TeamCard';
-import { api } from '../services/api';
+import { laravelApi } from '../services/laravelApi';
 import { Settings, Service, Project, TeamMember } from '../types';
 import { Users, Clock, Target, Award } from 'lucide-react';
 
@@ -15,15 +15,16 @@ const Home = () => {
   const [services, setServices] = useState<Service[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [team, setTeam] = useState<TeamMember[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [slidersData, servicesData, projectsData, teamData] = await Promise.all([
-          api.sliders.getAll().catch(err => { console.error('Sliders error:', err); return []; }),
-          api.services.getAll().catch(err => { console.error('Services error:', err); return []; }),
-          api.projects.getAll({ per_page: 6 }).catch(err => { console.error('Projects error:', err); return []; }),
-          api.team.getAll().catch(err => { console.error('Team error:', err); return []; }),
+          laravelApi.sliders.getAll().catch(err => { console.error('Sliders error:', err); return []; }),
+          laravelApi.services.getAll().catch(err => { console.error('Services error:', err); return []; }),
+          laravelApi.projects.getAll().catch(err => { console.error('Projects error:', err); return []; }),
+          laravelApi.team.getAll().catch(err => { console.error('Team error:', err); return []; }),
         ]);
 
         setSliders(slidersData || []);
@@ -32,6 +33,8 @@ const Home = () => {
         setTeam((teamData || []).slice(0, 4));
       } catch (error) {
         console.error('Error fetching home data:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -53,22 +56,56 @@ const Home = () => {
     footer_text: '',
   }), []);
 
+  // Default sliders if backend doesn't have any
+  const defaultSliders = useMemo(() => [
+    {
+      id: 1,
+      title: 'E3 INNOVATION LIMITED',
+      subtitle: 'Your Trusted Software Development Partner',
+      image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&h=600&fit=crop',
+      button_text: 'Our Services',
+      button_link: '/services',
+    },
+    {
+      id: 2,
+      title: 'INNOVATIVE SOLUTIONS',
+      subtitle: 'We deliver cutting-edge technology solutions that transform businesses',
+      image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1920&h=600&fit=crop',
+      button_text: 'View Projects',
+      button_link: '/projects',
+    },
+    {
+      id: 3,
+      title: 'EXPERT TEAM',
+      subtitle: 'Highly qualified engineers and developers ready to bring your vision to life',
+      image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&h=600&fit=crop',
+      button_text: 'Meet Our Team',
+      button_link: '/team',
+    },
+  ], []);
+
   // Memoize services to prevent unnecessary re-renders
   const memoizedServices = useMemo(() => services, [services]);
   const memoizedProjects = useMemo(() => projects, [projects]);
   const memoizedTeam = useMemo(() => team, [team]);
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-red-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Use backend sliders if available, otherwise use default sliders
+  const displaySliders = sliders.length > 0 ? sliders : defaultSliders;
+
   return (
     <div className="min-h-screen bg-white">
-      {sliders.length > 0 ? (
-        <Slider slides={sliders} />
-      ) : (
-        <Hero
-          title={(settings || defaultSettings).hero_title}
-          subtitle={(settings || defaultSettings).hero_subtitle}
-          backgroundImage={(settings || defaultSettings).hero_background_image}
-        />
-      )}
+      <Slider slides={displaySliders} />
 
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
