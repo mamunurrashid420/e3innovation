@@ -43,7 +43,7 @@ export const laravelApi = {
       try {
         const { data } = await apiClient.get('/services');
         const services = data.data || [];
-        const baseUrl = API_BASE_URL.replace(/\/api$/, '');
+        const baseUrl = API_BASE_URL.replace(/\/api\/?$/, '');
         return services.map((service: any) => {
           let iconUrl = service.icon;
           if (iconUrl && !iconUrl.startsWith('http')) {
@@ -66,7 +66,7 @@ export const laravelApi = {
         const { data } = await apiClient.get(`/services/${slug}`);
         const service = data.data || null;
         if (service) {
-          const baseUrl = API_BASE_URL.replace(/\/api$/, '');
+          const baseUrl = API_BASE_URL.replace(/\/api\/?$/, '');
           let iconUrl = service.icon;
           if (iconUrl && !iconUrl.startsWith('http')) {
             iconUrl = `${baseUrl}/${iconUrl.replace(/^\//, '')}`;
@@ -126,7 +126,7 @@ export const laravelApi = {
       try {
         const { data } = await apiClient.get('/projects', { params });
         const projects = data.data || [];
-        const baseUrl = API_BASE_URL.replace(/\/api$/, '');
+        const baseUrl = API_BASE_URL.replace(/\/api\/?$/, '');
         return projects.map((project: any) => {
           let imageUrl = project.image;
           if (imageUrl && !imageUrl.startsWith('http')) {
@@ -145,7 +145,7 @@ export const laravelApi = {
         const { data } = await apiClient.get(`/projects/${slug}`);
         const project = data.data || null;
         if (project) {
-          const baseUrl = API_BASE_URL.replace(/\/api$/, '');
+          const baseUrl = API_BASE_URL.replace(/\/api\/?$/, '');
           let imageUrl = project.image;
           if (imageUrl && !imageUrl.startsWith('http')) {
             imageUrl = `${baseUrl}/${imageUrl.replace(/^\//, '')}`;
@@ -208,7 +208,7 @@ export const laravelApi = {
         const { data } = await apiClient.get('/team-members');
         const members = data.data || [];
         return members.map((member: any) => {
-          const baseUrl = API_BASE_URL.replace(/\/api$/, '');
+          const baseUrl = API_BASE_URL.replace(/\/api\/?$/, '');
           let imageUrl = member.image;
           if (imageUrl && !imageUrl.startsWith('http')) {
             imageUrl = `${baseUrl}/${imageUrl.replace(/^\//, '')}`;
@@ -327,7 +327,7 @@ export const laravelApi = {
         console.log('Sliders API Response:', data);
         const sliders = data.data || data || [];
         const mappedSliders = sliders.map((slider: any) => {
-          const baseUrl = API_BASE_URL.replace(/\/api$/, '');
+          const baseUrl = API_BASE_URL.replace(/\/api\/?$/, '');
           let imageUrl = slider.image;
           if (imageUrl && !imageUrl.startsWith('http')) {
             imageUrl = `${baseUrl}/${imageUrl.replace(/^\//, '')}`;
@@ -355,7 +355,7 @@ export const laravelApi = {
       try {
         const { data } = await apiClient.get('/admin/sliders');
         const sliders = data.data || [];
-        const baseUrl = API_BASE_URL.replace('/api', '');
+        const baseUrl = API_BASE_URL.replace(/\/api\/?$/, '');
 
         return sliders.map((slider: any) => {
           let imageUrl = slider.image;
